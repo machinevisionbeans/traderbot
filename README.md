@@ -42,7 +42,8 @@ b.	Interface for Comparator: __Execute(Int BuySell, Float TP, FloatSL, Int Lever
 
 ## How to Use
 1. Start a virtual env and pip install requirements.txt
-2. Download the TA-Lib wheel https://www.lfd.uci.edu/~gohlke/pythonlibs/#ta-lib and pip install it
+2. (Windows) Download the TA-Lib wheel https://www.lfd.uci.edu/~gohlke/pythonlibs/#ta-lib and pip install it
+   (Linux)   Follow instructions here https://medium.com/@artiya4u/installing-ta-lib-on-ubuntu-944d8ca24eae May need to use pip install ta-lib twice
 3. Start a Name Server using pyro4-ns
 4. Run executor.py to start a executor server
 5. Run main.py or mainTest.py

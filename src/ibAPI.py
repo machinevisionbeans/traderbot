@@ -2,7 +2,7 @@ from ibapi.client import EClient
 from ibapi.wrapper import EWrapper
 
 from ibapi.contract import Contract
-from ibapi.order import *
+from ibapi.order import Order
 
 import threading
 import time
@@ -224,7 +224,6 @@ if __name__ == '__main__':
     app = ibAPI()
     app.Start()
 
-    app.reqIds(1)
     #Place orders
     # app.buyOrder("AAPL", 100, 200, 210, 190)
 
