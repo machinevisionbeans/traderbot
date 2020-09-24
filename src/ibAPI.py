@@ -130,7 +130,11 @@ class ibAPI(EClient, EWrapper):
     #     self.modelCode =  ""
     #     self.lastLiquidity = 0
 
-        self.postExec.executed(tickerName=contract.symbol, orderId=execution.orderId, execPrice=execution.avgPrice, execTotalQty=execution.cumQty)
+        if contract.secType == 'CASH':
+            tickerName = contract.symbol + contract.currency + '=x'
+        else:
+            tickerName = contract.symbol
+        self.postExec.executed(tickerName=tickerName, orderId=execution.orderId, execPrice=execution.avgPrice, execTotalQty=execution.cumQty)
 
         print('Order Executed: ', reqId, contract.symbol, contract.secType, contract.currency, execution.execId, execution.orderId, execution.shares, execution.lastLiquidity)
 
