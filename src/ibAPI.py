@@ -45,7 +45,20 @@ class ibAPI(EClient, EWrapper):
         self.nextorderId += number
         return nextID
 
-
+    def checkConnection(self):
+        if not self.isConnected():
+            print("TWS Not connected. Connecting...")
+            self.nextorderId = None
+            self.connectPlatform()
+            time.sleep(1)
+            while True:
+                if isinstance(self.nextorderId, int):
+                    print('connected')
+                    print()
+                    break
+                else:
+                    print('waiting for connection')
+                    time.sleep(1)
 
     # General fn
     def Start(self):
@@ -94,6 +107,14 @@ class ibAPI(EClient, EWrapper):
 
     def execDetails(self, reqId, contract, execution):
         print('Order Executed: ', reqId, contract.symbol, contract.secType, contract.currency, execution.execId, execution.orderId, execution.shares, execution.lastLiquidity)
+
+    #! Market Order
+    def MarketOrder(self, action, quantity):
+        order = Order()
+        order.action = action
+        order.orderType = "MKT"
+        order.totalQuantity = quantity
+        return order
 
     #! Limit Order
     # A Limit order is an order to buy or sell at a specified price or better. The Limit order ensures that if the order fills, 
@@ -195,6 +216,34 @@ class ibAPI(EClient, EWrapper):
         bracketOrder = [ParentOrder, TakeProfit, StopLoss]
         return bracketOrder	
 
+    #! Bracket Market Order with Stop Loss and Take Profit
+    def BracketMktStopLossTakeProfit(self, action, quantity, takeProfitPrice, stopLossPrice):
+
+        oppAction = "BUY" if action == "SELL" else "SELL"
+
+        # reserve the next 3 order IDs
+        nextID = self.obtainNextValidOrderIDs(3)
+
+        # Create Limit Order
+        ParentOrder = self.MarketOrder(action=action, quantity=quantity)
+        ParentOrder.orderId = nextID
+        ParentOrder.transmit = False
+
+        # Create Take Profit (Limit Order)
+        TakeProfit = self.LimitOrder(action=oppAction, quantity=quantity, limitPrice=takeProfitPrice)
+        TakeProfit.orderId = ParentOrder.orderId + 1
+        TakeProfit.transmit = False
+        TakeProfit.parentId = ParentOrder.orderId
+
+        # Create Stop Loss (Stop Order)
+        StopLoss = self.StopOrder(action=oppAction, quantity=quantity, stopPrice=stopLossPrice)
+        StopLoss.orderId = ParentOrder.orderId + 2
+        StopLoss.transmit = True
+        StopLoss.parentId = ParentOrder.orderId
+
+        bracketOrder = [ParentOrder, TakeProfit, StopLoss]
+        return bracketOrder	
+
     #! Custom Bracket Order
     def CustomBracketOrder(self, Parent, Child1, Child2):
         # reserve the next 3 order IDs
@@ -211,8 +260,8 @@ class ibAPI(EClient, EWrapper):
     '''    
     Executing Orders
     '''
-    def buyOrder(self, tickerName, buySell, amount, takeProfit, stopLoss):
-        bracket = self.BracketLimitStopLossTakeProfit("BUY", buySell, amount, takeProfit, stopLoss)
+    def makeOrder(self, tickerName, action, quantity, takeProfit, stopLoss):
+        bracket = self.BracketMktStopLossTakeProfit(action, quantity, takeProfit, stopLoss)
         for o in bracket:
             print("place order")
             self.placeOrder(o.orderId, self.Stock_contract(tickerName), o)

@@ -68,7 +68,7 @@ class Comparator():
             tradeWindow = pd.read_csv('./database/' + self.tickerName + '/trades.csv', index_col= 0)
             tradeWindow = tradeWindow.append({'Time Stamp' : timestamp, 'Position': 1, 'Amount': results[highestIndicator]["amount"], 'Entry': results[highestIndicator]["entry"], 'Stop Loss': results[highestIndicator]["stoploss"], 'Target': results[highestIndicator]["takeprofit"], 'Leverage': leverage, 'Outcome': 'Pending', 'Profits': 0}, ignore_index = True)
             tradeWindow.to_csv('./database/' + self.tickerName + '/trades.csv')
-            self.executor.execute(self.tickerName, 1, results[highestIndicator]["amount"], results[highestIndicator]["stoploss"], results[highestIndicator]["takeprofit"], leverage)
+            self.executor.execute(tickerName=self.tickerName, action="BUY", quantity=results[highestIndicator]["amount"], stopLoss=results[highestIndicator]["stoploss"], takeProfit=results[highestIndicator]["takeprofit"], leverage=leverage)
         elif total[0] < -100:
             if total[0] < -500: leverage = 5
             elif total[0] < -200: leverage = 2
@@ -76,7 +76,7 @@ class Comparator():
             tradeWindow = pd.read_csv('./database/' + self.tickerName + '/trades.csv', index_col= 0)
             tradeWindow = tradeWindow.append({'Time Stamp' : timestamp, 'Position': -1, 'Amount': results[lowestIndicator]["amount"], 'Entry': results[lowestIndicator]["entry"], 'Stop Loss': results[lowestIndicator]["stoploss"], 'Target': results[lowestIndicator]["takeprofit"], 'Leverage': leverage, 'Outcome': 'Pending', 'Profits': 0}, ignore_index = True)
             tradeWindow.to_csv('./database/' + self.tickerName + '/trades.csv')
-            self.executor.execute(self.tickerName, -1, results[lowestIndicator]["amount"], results[lowestIndicator]["stoploss"], results[lowestIndicator]["takeprofit"], leverage)
+            self.executor.execute(tickerName=self.tickerName, action="SELL", quantity=results[lowestIndicator]["amount"], stopLoss=results[lowestIndicator]["stoploss"], takeProfit=results[lowestIndicator]["takeprofit"], leverage=leverage)
         pass
 
     def intervalAnalysis(self, update):

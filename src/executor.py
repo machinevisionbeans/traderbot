@@ -10,17 +10,22 @@ import time
 
 
 class Executor():
+    app = ibAPI()
+    app.Start()
+
     def __init__(self):
         pass
+        
     
     @Pyro4.expose
     @Pyro4.oneway
-    def execute(self, tickerName, buySell, amount, stopLoss, takeProfit, leverage):
-        app = ibAPI()
-        app.Start()
+    def execute(self, tickerName, action, quantity, stopLoss, takeProfit, leverage):
+        # Check if connected
+        self.app.checkConnection()
         #Place orders
         print('making order')
-        app.buyOrder(tickerName, buySell, amount, stopLoss, takeProfit)
+        #! Currently this will be executed as a market order since no limit price is given!
+        self.app.makeOrder(tickerName, action, quantity, stopLoss, takeProfit)
         #Cancel order 
         # print('cancelling order')
         # app.cancelOrder(app.nextorderId)
