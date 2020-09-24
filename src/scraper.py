@@ -26,15 +26,15 @@ class Scraper():
 
             analysisChangePendingToVoid = False
             t = datetime.utcnow()
-            sleeptime = 300 - (t.second + t.microsecond/1000000.0)
-            time.sleep(sleeptime + 60)
+            sleeptime = 60 - (t.second + t.microsecond/1000000.0)
+            time.sleep(sleeptime + 40)
 
             
 
     def scrape(self, ChangePendingToVoid):
 
         tickers = Ticker(self.tickerName)
-        df = tickers.history(period='7d', interval='5m')
+        df = tickers.history(period='7d', interval='1m')
         df = df.iloc[::-1]
 
         if os.path.exists('./database/' + self.tickerName):

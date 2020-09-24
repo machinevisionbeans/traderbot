@@ -74,7 +74,7 @@ class Comparator():
             elif total[0] < -200: leverage = 2
             else: leverage = 1
             tradeWindow = pd.read_csv('./database/' + self.tickerName + '/trades.csv', index_col= 0)
-            tradeWindow = tradeWindow.append({'Time Stamp' : timestamp, 'Position': -1, 'Amount': results[highestIndicator]["amount"], 'Entry': results[highestIndicator]["entry"], 'Stop Loss': results[highestIndicator]["stoploss"], 'Target': results[highestIndicator]["takeprofit"], 'Leverage': leverage, 'Outcome': 'Pending', 'Profits': 0}, ignore_index = True)
+            tradeWindow = tradeWindow.append({'Time Stamp' : timestamp, 'Position': -1, 'Amount': results[lowestIndicator]["amount"], 'Entry': results[lowestIndicator]["entry"], 'Stop Loss': results[lowestIndicator]["stoploss"], 'Target': results[lowestIndicator]["takeprofit"], 'Leverage': leverage, 'Outcome': 'Pending', 'Profits': 0}, ignore_index = True)
             tradeWindow.to_csv('./database/' + self.tickerName + '/trades.csv')
             self.executor.execute(self.tickerName, -1, results[lowestIndicator]["amount"], results[lowestIndicator]["stoploss"], results[lowestIndicator]["takeprofit"], leverage)
         pass
@@ -99,7 +99,7 @@ class Comparator():
 
                 elif row['Position'] == -1:
                     if update['low'].values[0] < row['Target']:
-                        oldPriceDiffernece = row['Entry'] - row['Target']
+                        oldPriceDifference = row['Entry'] - row['Target']
                         newPriceDifference = 1.5 * oldPriceDifference
                         df.loc[index, 'Stop Loss'] = row['Target']
                         df.loc[index, 'Target'] = row['Entry'] - newPriceDifference

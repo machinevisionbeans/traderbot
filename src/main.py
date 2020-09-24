@@ -9,6 +9,8 @@ import multiprocessing as mp
 
 from scraper import Scraper
 
+
+
 if __name__ == '__main__':
     #############################################
     # 1. TO-DO: REPLACE THIS STATIC tickerName LIST WITH ONE THAT READS A CSV FILE FOR THE tickerNameS

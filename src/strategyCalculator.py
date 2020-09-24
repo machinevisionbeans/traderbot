@@ -31,8 +31,8 @@ class StrategyCalculator():
         Results = indi.beginCalc(df, self.tickerName)
 
         for i in Results:
-            print('Indicator: ' + i)
-            print('Position: ' + str((Results[i])['position']))
+            # print('Indicator: ' + i)
+            # print('Position: ' + str((Results[i])['position']))
             if (Results[i])["position"] != 0:
                 self.analyser.PseudoTrade(df,i, Results[i])
 
