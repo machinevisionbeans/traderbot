@@ -12,6 +12,7 @@ remove the size prefix and put the rest in a Queue.
 """
 
 import logging
+import time
 from threading import Thread
 
 from ibapi import comm
@@ -31,9 +32,28 @@ class EReader(Thread):
             buf = b""
             while self.conn.isConnected():
 
-                data = self.conn.recvMsg()
-                logger.debug("reader loop, recvd size %d", len(data))
-                buf += data
+                try:
+                    data = self.conn.recvMsg()
+                    logger.debug("reader loop, recvd size %d", len(data))
+                    buf += data
+
+                except OSError as err:
+                    #If connection is disconnected, Windows will generate error 10038
+                    if err.errno == 10038:
+                        
+                        #Wait up to 1 second for disconnect confirmation
+                        waitUntil = time.time() + 1
+                        while time.time() < waitUntil:
+                            if not self.conn.isConnected():
+                                break
+                            time.sleep(.1)
+
+                        if not self.conn.isConnected():
+                            logger.debug("Ignoring OSError: {0}".format(err))
+                            break                    
+
+                    #Disconnect wasn't received or error != 10038
+                    raise
 
                 while len(buf) > 0:
                     (size, msg, buf) = comm.read_msg(buf)
