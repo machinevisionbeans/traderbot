@@ -3,6 +3,10 @@ from ibapi.wrapper import EWrapper
 
 from ibapi.contract import Contract
 from ibapi.order import Order
+from ibapi.execution import Execution
+from ibapi.commission_report import CommissionReport
+
+from IBanalyser import IBAnalyser
 
 import threading
 import time
@@ -25,6 +29,7 @@ class ibAPI(EClient, EWrapper):
     def __init__(self):
         EClient.__init__(self, self)
         self.nextorderId = None
+        self.postExec = IBAnalyser()
 
     '''    
     Connect to TWS
@@ -105,8 +110,42 @@ class ibAPI(EClient, EWrapper):
     def openOrder(self, orderId, contract, order, orderState):
         print('openOrder id:', orderId, contract.symbol, contract.secType, '@', contract.exchange, ':', order.action, order.orderType, order.totalQuantity, orderState.status)
 
-    def execDetails(self, reqId, contract, execution):
+    def execDetails(self, reqId, contract:Contract, execution:Execution):
+    #     class Execution(Object):
+    # def __init__(self):
+    #     self.execId = ""
+    #     self.time =  ""
+    #     self.acctNumber =  ""
+    #     self.exchange =  ""
+    #     self.side = ""
+    #     self.shares = 0.
+    #     self.price = 0. 
+    #     self.permId = 0
+    #     self.clientId = 0
+    #     self.orderId = 0
+    #     self.liquidation = 0
+    #     self.cumQty = 0.
+    #     self.avgPrice = 0.
+    #     self.orderRef =  ""
+    #     self.evRule =  ""
+    #     self.evMultiplier = 0.
+    #     self.modelCode =  ""
+    #     self.lastLiquidity = 0
+
+        self.postExec.executed(tickerName=contract.symbol, orderId=execution.orderId, execPrice=execution.avgPrice, execTotalQty=execution.cumQty)
+
         print('Order Executed: ', reqId, contract.symbol, contract.secType, contract.currency, execution.execId, execution.orderId, execution.shares, execution.lastLiquidity)
+
+    def commissionReport(self, commissionReport:CommissionReport):
+    #     class CommissionReport(Object):
+    # def __init__(self):
+    #     self.execId = ""
+    #     self.commission = 0. 
+    #     self.currency = ""
+    #     self.realizedPNL =  0.
+    #     self.yield_ = 0.
+    #     self.yieldRedemptionDate = 0  # YYYYMMDD format
+        pass
 
     #! Market Order
     def MarketOrder(self, action, quantity):

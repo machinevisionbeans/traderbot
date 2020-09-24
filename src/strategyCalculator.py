@@ -23,7 +23,7 @@ class StrategyCalculator():
         ## Inform Analyser to do the interval Analysis first
         ## This is before the pseudotrades to ensure no clashes
         self.analyser.intervalAnalysis(df.head(1))
-        self.comparator.intervalAnalysis(df.head(1))
+        # self.comparator.intervalAnalysis(df.head(1))
 
         
         indi = ind.Indicator()
