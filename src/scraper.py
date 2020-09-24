@@ -70,7 +70,7 @@ class Scraper():
             analysisColumnNames = ['Time Stamp', 'Strategy', 'Position', 'Amount', 'Entry', 'Stop Loss', 'Take Profit', 'Outcome', 'Profits', 'Points Gained/Lost']
             analysisFrame = pd.DataFrame(columns=analysisColumnNames)
             analysisFrame.to_csv('./database/' + self.tickerName + '/analysis.csv')
-            tradeColumnNames = ['Time Stamp', 'Position', 'Amount', 'Entry', 'Stop Loss', 'Target', 'Leverage', 'Outcome', 'Profits']
+            tradeColumnNames = ['Time Stamp', 'OrderId', 'Position', 'Amount', 'Entry', 'Stop Loss', 'Target', 'Leverage', 'Outcome', 'Profits']
             tradeFrame = pd.DataFrame(columns=tradeColumnNames)
             tradeFrame.to_csv('./database/' + self.tickerName + '/trades.csv')
             df.to_csv('./database/' + self.tickerName + '/query.csv')
