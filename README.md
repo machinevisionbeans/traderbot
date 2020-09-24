@@ -49,6 +49,9 @@ b.	Interface for Comparator: __Execute(Int BuySell, Float TP, FloatSL, Int Lever
 5. Run main.py or mainTest.py
 
 ## How to Use IBAPI with Virtualenv
-1. Download Python Native API from here http://interactivebrokers.github.io/
-2. Go into the directory – /TWS API/source/pythonclient. In this folder, run the python3 setup.py install file to install the API as a package.
+~~1. Download Python Native API from here http://interactivebrokers.github.io/
+2. Go into the directory – /TWS API/source/pythonclient. In this folder, run the python3 setup.py install file to install the API as a package.~~
+The original file had bugs that resulted in errors on API disconnect. It was fixed using code from here: https://github.com/PythonForForex/Interactive-brokers-python-api-guide/tree/master/Common%20Errors.
+1. Go to src/ibAPIinstall/pythonclient
+2. run python3 setup.py install
 3. By running that in the virtualenv, the ibapi can be used within the virtualenv

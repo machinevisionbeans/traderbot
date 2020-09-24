@@ -29,12 +29,12 @@ class Executor():
 
         timestamp = datetime.fromtimestamp(time.time()).strftime('%H:%M')
         tradeWindow = pd.read_csv('./database/' + tickerName + '/trades.csv', index_col= 0)
-        tradeWindow = tradeWindow.append({'Time Stamp' : timestamp, 'orderId': orderId, 'Position': action, 'Amount': (quantity * limitPrice), 'Entry': limitPrice, 'Stop Loss': stopLoss, 'Target': takeProfit, 'Leverage': leverage, 'Outcome': 'Sent', 'Profits': 0}, ignore_index = True)
+        tradeWindow = tradeWindow.append({'Time Stamp' : timestamp, 'orderId': orderId, 'Position': action, 'Amount': (quantity * limitPrice), 'Quantity': quantity, 'Entry': limitPrice, 'Stop Loss': stopLoss, 'Target': takeProfit, 'Leverage': leverage, 'Outcome': 'Sent', 'Profits': 0}, ignore_index = True)
         tradeWindow.to_csv('./database/' + tickerName + '/trades.csv')
 
         print("(" + datetime.fromtimestamp(time.time()).strftime('%H:%M') + ") " + "Sent " + str(action) + " " + tickerName + " for $" + str(limitPrice) + " at x" + str(leverage) + " leverage. Stop Loss = " + str(stopLoss) + ", Take Profit = " + str(takeProfit) + ".")
 
-    
+
 ### MAIN CODE EXECUTION
 Pyro4.config.MAX_RETRIES = 200
 Pyro4.config.THREADPOOL_SIZE = 3000
