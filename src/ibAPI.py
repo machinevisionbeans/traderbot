@@ -275,12 +275,12 @@ if __name__ == '__main__':
     app.Start()
 
     #Place orders
-    app.makeOrder("AAPL", "BUY", 100, 500, 10)
+    app.makeOrder("AAPL", "BUY", 100, 1, 500, 10)
 
     #Cancel order 
     # print('cancelling order')
     # app.cancelOrder(app.nextorderId)
-    time.sleep(100)
+    time.sleep(3)
 
     app.disconnect()
 
