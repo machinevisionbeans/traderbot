@@ -86,7 +86,12 @@ class ibAPI(EClient, EWrapper):
     '''    
     Contracts
     '''
-    def CreateContract(self, security, securityType='STK', exchange='IDEALPRO', currency='USD'):
+    def CreateContract(self, security, securityType='STK', exchange='SMART', currency='USD'):
+        # Check if this is Stock or Forex
+        if len(security) > 5:
+            currency = security[3:6]
+            security = security[0:3]
+            securityType = 'CASH'
         contract = Contract()
         contract.symbol = security
         contract.secType = securityType
@@ -94,13 +99,6 @@ class ibAPI(EClient, EWrapper):
         contract.currency = currency
         return contract
     
-    def Stock_contract(self, symbol, secType='STK', exchange='SMART', currency='USD'):
-        contract = Contract()
-        contract.symbol = symbol
-        contract.secType = secType
-        contract.exchange = exchange
-        contract.currency = currency
-        return contract
     '''    
     Defining Orders
     '''
@@ -132,7 +130,11 @@ class ibAPI(EClient, EWrapper):
     #     self.modelCode =  ""
     #     self.lastLiquidity = 0
 
-        self.postExec.executed(tickerName=contract.symbol, orderId=execution.orderId, execPrice=execution.avgPrice, execTotalQty=execution.cumQty)
+        if contract.secType == 'CASH':
+            tickerName = contract.symbol + contract.currency + '=x'
+        else:
+            tickerName = contract.symbol
+        self.postExec.executed(tickerName=tickerName, orderId=execution.orderId, execPrice=execution.avgPrice, execTotalQty=execution.cumQty)
 
         print('Order Executed: ', reqId, contract.symbol, contract.secType, contract.currency, execution.execId, execution.orderId, execution.shares, execution.lastLiquidity)
 
@@ -303,7 +305,7 @@ class ibAPI(EClient, EWrapper):
         bracket = self.BracketLimitStopLossTakeProfit(action, quantity, limitPrice, takeProfit, stopLoss)
         for o in bracket:
             print("place order")
-            self.placeOrder(o.orderId, self.Stock_contract(tickerName), o)
+            self.placeOrder(o.orderId, self.CreateContract(tickerName), o)
         # time.sleep(3)
         print('Finished buy order')
         return bracket[0].orderId
