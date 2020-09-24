@@ -260,13 +260,14 @@ class ibAPI(EClient, EWrapper):
     '''    
     Executing Orders
     '''
-    def makeOrder(self, tickerName, action, quantity, takeProfit, stopLoss):
-        bracket = self.BracketMktStopLossTakeProfit(action, quantity, takeProfit, stopLoss)
+    def makeOrder(self, tickerName, action, quantity, limitPrice, takeProfit, stopLoss):
+        bracket = self.BracketLimitStopLossTakeProfit(action, quantity, limitPrice, takeProfit, stopLoss)
         for o in bracket:
             print("place order")
             self.placeOrder(o.orderId, self.Stock_contract(tickerName), o)
         # time.sleep(3)
         print('Finished buy order')
+        return bracket[0].orderId
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
@@ -274,12 +275,12 @@ if __name__ == '__main__':
     app.Start()
 
     #Place orders
-    # app.buyOrder("AAPL", 100, 200, 210, 190)
+    app.makeOrder("AAPL", "BUY", 100, 500, 10)
 
     #Cancel order 
     # print('cancelling order')
     # app.cancelOrder(app.nextorderId)
-    time.sleep(3)
+    time.sleep(100)
 
     app.disconnect()
 
