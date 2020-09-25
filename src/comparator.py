@@ -64,7 +64,7 @@ class Comparator():
 
         # Round off numbers to precision allowed (0.01 for stocks and 0.00005 for forex)
         # Determine if stocks or forex
-        if len(self.tickername) > 5:
+        if len(self.tickerName) > 5:
             precision = 0.00005
             decimalPlaces = 5
         else:
