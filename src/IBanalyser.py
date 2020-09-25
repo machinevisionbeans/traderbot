@@ -8,6 +8,11 @@ class IBAnalyser():
         for index,row in df.iterrows():
             if row['OrderId'] == orderId:
                 if row['Quantity'] == execTotalQty:
+                    # Parent Order has executed
+                    df.loc[index, 'Outcome'] = 'Filled'
+                    df.to_csv('./database/' + tickerName + '/trades.csv')
+            elif row['OrderId'] + 2 >= orderId:
+                if row['Quantity'] == execTotalQty:
                     if row['Position'] == "BUY":
                         if execPrice > row['Entry']:
                             df.loc[index, 'Outcome'] = 'Closed - Profit'

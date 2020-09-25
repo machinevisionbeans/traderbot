@@ -1,7 +1,7 @@
 from ibapi.client import EClient
 from ibapi.wrapper import EWrapper
 
-from ibapi.contract import Contract
+from ibapi.contract import Contract, ContractDetails
 from ibapi.order import Order
 from ibapi.execution import Execution
 from ibapi.commission_report import CommissionReport
@@ -15,14 +15,6 @@ import logging
 # TODO 
 # Make a base class of ibAPI with the generic function names in case we 
 # switch to a differnt platform in the future
-#class Platform():
-
-#Empty 'struct' for Contracts and Orders
-# class Contract():
-#     pass
-
-# class Order():
-#     pass
 
 class ibAPI(EClient, EWrapper):
 
@@ -50,20 +42,17 @@ class ibAPI(EClient, EWrapper):
         self.nextorderId += number
         return nextID
 
-    def checkConnection(self):
+    def checkConnection(self, timeDelay):
         if not self.isConnected():
             print("TWS Not connected. Connecting...")
             self.nextorderId = None
             self.connectPlatform()
-            time.sleep(1)
-            while True:
-                if isinstance(self.nextorderId, int):
-                    print('connected')
-                    print()
-                    break
-                else:
-                    print('waiting for connection')
-                    time.sleep(1)
+            time.sleep(timeDelay)
+            if isinstance(self.nextorderId, int):
+                print('connected')
+                print()
+            else:
+                self.checkConnection(timeDelay+2)
 
     # General fn
     def Start(self):
@@ -92,6 +81,7 @@ class ibAPI(EClient, EWrapper):
             currency = security[3:6]
             security = security[0:3]
             securityType = 'CASH'
+            exchange = 'IDEALPRO'
         contract = Contract()
         contract.symbol = security
         contract.secType = securityType
@@ -148,6 +138,9 @@ class ibAPI(EClient, EWrapper):
     #     self.yield_ = 0.
     #     self.yieldRedemptionDate = 0  # YYYYMMDD format
         pass
+
+    def contractDetails(self, reqId:int, contractDetails:ContractDetails):
+        print(contractDetails.contract.symbol + contractDetails.contract.currency + ";" + contractDetails.marketRuleIds)
 
     #! Market Order
     def MarketOrder(self, action, quantity):
@@ -311,18 +304,28 @@ class ibAPI(EClient, EWrapper):
         return bracket[0].orderId
 
 if __name__ == '__main__':
+    import pandas as pd
     logging.basicConfig(level=logging.INFO)
     app = ibAPI()
     app.Start()
 
-    #Place orders
-    app.makeOrder("AAPL", "BUY", 100, 1, 500, 10)
+    TickerNames = pd.read_csv('./src/tickerNames/Forex.csv')
+    TickerNames = TickerNames.values
 
-    #Cancel order 
-    # print('cancelling order')
-    # app.cancelOrder(app.nextorderId)
-    time.sleep(3)
 
+    # for tickerName in TickerNames:
+        # print(tickerName[0])
+        # contract = app.CreateContract(tickerName[0])
+        # app.reqContractDetails(app.obtainNextValidOrderIDs(), contract)
+        # time.sleep(2)
+    app.reqMarketRule(26)
+    app.reqMarketRule(239)
+    # app.reqMarketRule(145)
+    # app.reqMarketRule(32)
+    # app.reqMarketRule(59)
+    # app.reqMarketRule(301)
+
+    time.sleep(5)
     app.disconnect()
 
-    time.sleep(3)
+    print(app.isConnected())

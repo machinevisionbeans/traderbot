@@ -26,8 +26,8 @@ class Scraper():
 
             analysisChangePendingToVoid = False
             t = datetime.utcnow()
-            sleeptime = 60 - (t.second + t.microsecond/1000000.0)
-            time.sleep(sleeptime + 40)
+            sleeptime = 300 - (t.second + t.microsecond/1000000.0)
+            time.sleep(sleeptime + 60)
 
             
 

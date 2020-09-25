@@ -1,5 +1,6 @@
 import Pyro4
 import pandas as pd
+from utils import precisionRound
 
 class Comparator():
     def __init__(self, tickerName):
@@ -61,17 +62,34 @@ class Comparator():
 
         total = df.sum(axis = 1)
 
+        # Round off numbers to precision allowed (0.01 for stocks and 0.00005 for forex)
+        # Determine if stocks or forex
+        if len(self.tickername) > 5:
+            precision = 0.00005
+            decimalPlaces = 5
+        else:
+            precision = 0.01
+            decimalPlaces = 2
+        
+
         if total[0] > 100:
             if total[0] > 500: leverage = 5
             elif total[0] > 200: leverage = 2
             else: leverage = 1
-            self.executor.execute(tickerName=self.tickerName, action="BUY", quantity=(results[highestIndicator]["amount"]/results[highestIndicator]["entry"]), limitPrice=results[highestIndicator]["entry"], stopLoss=results[highestIndicator]["stoploss"], takeProfit=results[highestIndicator]["takeprofit"], leverage=leverage)
+            limitPrice = precisionRound(results[highestIndicator]["entry"], decimalPlaces, precision)
+            stopLoss = precisionRound(results[highestIndicator]["stoploss"], decimalPlaces, precision)
+            takeProfit = precisionRound(results[highestIndicator]["takeprofit"], decimalPlaces, precision)
+            quantity = results[highestIndicator]["amount"] / limitPrice
+            self.executor.execute(tickerName=self.tickerName, action="BUY", quantity=quantity, limitPrice=limitPrice, stopLoss=stopLoss, takeProfit=takeProfit, leverage=leverage)
         elif total[0] < -100:
             if total[0] < -500: leverage = 5
             elif total[0] < -200: leverage = 2
             else: leverage = 1
-            self.executor.execute(tickerName=self.tickerName, action="SELL", quantity=(results[lowestIndicator]["amount"]/results[highestIndicator]["entry"]), limitPrice=results[highestIndicator]["entry"],stopLoss=results[lowestIndicator]["stoploss"], takeProfit=results[lowestIndicator]["takeprofit"], leverage=leverage)
-        pass
+            limitPrice = precisionRound(results[lowestIndicator]["entry"], decimalPlaces, precision)
+            stopLoss = precisionRound(results[lowestIndicator]["stoploss"], decimalPlaces, precision)
+            takeProfit = precisionRound(results[lowestIndicator]["takeprofit"], decimalPlaces, precision)
+            quantity = results[lowestIndicator]["amount"] / limitPrice
+            self.executor.execute(tickerName=self.tickerName, action="SELL", quantity=quantity, limitPrice=limitPrice, stopLoss=stopLoss, takeProfit=takeProfit, leverage=leverage)
 
     # def intervalAnalysis(self, update):
     #     df = pd.read_csv('./database/' + self.tickerName + '/trades.csv', index_col= 0)
