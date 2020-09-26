@@ -1,9 +1,9 @@
 ,Ticker Name,No. of Trades,Profits
 0,EURUSD=X,0,0
-1,ADBE,2,0
-2,SE,5,0
-3,JPYUSD=X,0,0
-4,AAPL,2,0
-5,MSFT,0,0
-6,ZM,5,0
-7,TSLA,2,0
+1,ADBE,0,0
+2,SE,0,0
+3,AAPL,0,0
+4,MSFT,0,0
+5,GBPSGD=X,0,0
+6,ZM,0,0
+7,TSLA,0,0

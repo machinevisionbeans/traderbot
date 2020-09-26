@@ -22,7 +22,7 @@ class Executor():
     @Pyro4.oneway
     def execute(self, tickerName, action, quantity, limitPrice, stopLoss, takeProfit, leverage):
         # Check if connected
-        self.app.checkConnection()
+        self.app.checkConnection(2)
         #Place orders
         print('making order')
         orderId = self.app.makeOrder(tickerName, action, quantity, limitPrice, stopLoss, takeProfit)
